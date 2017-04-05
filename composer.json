@@ -1,6 +1,6 @@
 {
-  "name": "alpercevik/RequestVariableValidation",
-  "description": "A validation class to validate and check if exists for variables.",
+  "name": "alpercevik/request-variable-validation",
+  "description": "A validation class to validate and check if exists for variables in an Object (request).",
   "license": "MIT",
   "keywords": ["validation","api request validation","variable validation"],
   "authors": [
