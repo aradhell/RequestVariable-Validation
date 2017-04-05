@@ -1,0 +1,21 @@
+{
+  "name": “alpercevik/RequestVariableValidation",
+  "description": "A validation class to validate and check if exists for variables.",
+  "license": "MIT",
+  "keywords": ["validation","api request validation","variable validation"],
+  "authors": [
+    {
+      "name": "Alper Cevik",
+      "email": "alpercevik@outlook.com"
+    }
+  ],
+  "require": {},
+  "require-dev": {
+    "phpunit/phpunit": "4.0.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "RequestVariableValidation\\": "src/requestVariableValidation“
+    }
+  }
+}
