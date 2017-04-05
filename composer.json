@@ -15,7 +15,7 @@
   },
   "autoload": {
     "psr-4": {
-      "RequestVariableValidation\\": "src/requestVariableValidation"
+      "RequestVariableValidation\\": "src/requestVariableValidation/"
     }
   }
 }
