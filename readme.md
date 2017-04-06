@@ -1,4 +1,8 @@
 **sample usage**
+
+```
+composer require alpercevik/request-variable-validation
+```
 ```php
 use RequestVariableValidation\RequestVariableValidation;
 require_once '/vendor/autoload.php'; // composer autoloader
