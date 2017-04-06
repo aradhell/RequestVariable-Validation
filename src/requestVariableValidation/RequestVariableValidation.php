@@ -33,27 +33,99 @@ class RequestVariableValidation
     {
 
         $success = true;
+        $result['status'] = 1;
         $missingParameters = array();
         foreach ($variables as $key => $value) {
-            if (@!array_key_exists(@$value, @$req_variables)) {
-                $success = false;
-                array_push($missingParameters, $value);
+
+            if ( (array) $value !== $value ) {
+                $parameter = $value;
+            } else {
+                $parameter = $key;
+                foreach($value as $validation => $rule) {
+                    $validate = self::$validation($req_variables[$key],$rule,$key);
+                    if($validate['status'] != 1) {
+                        $result = $validate;
+                    }
+                }
             }
-        }
-        if($success) {
-            $result['status'] = 1;
-        }
-        else {
-            $result['status'] = 0;
-            $result['message'] = 'missing parameters: '.implode(", ", $missingParameters);
+
+            if (@!array_key_exists(@$parameter, @$req_variables)) {
+                $success = false;
+                array_push($missingParameters, $parameter);
+                $result['status'] = 0;
+                $result['message'] = 'missing parameters: '.implode(", ", $missingParameters);
+            }
         }
         return $result;
     }
 
-    public function convertToResponse($validationResult)
+    public static function convertToResponse($validationResult)
     {
         $response['meta']['status'] = $validationResult['status'];
         $response['meta']['message'] = $validationResult['message'];
         return $response;
+    }
+
+    private static function max_length($item, $max_length,$key) {
+        if(strlen($item) <= $max_length) {
+            $result['status'] = 1;
+        } else {
+            $result['status'] = 0;
+            $result['message'] = $key." can contain ".$max_length." characters.";
+        }
+        return $result;
+    }
+
+    private static function min_length($item, $min_length,$key) {
+        if(strlen($item) >= $min_length) {
+            $result['status'] = 1;
+        } else {
+            $result['status'] = 0;
+            $result['message'] = $key." can contain ".$min_length." characters at minimum.";
+        }
+        return $result;
+    }
+
+    private static function type($item, $type,$key) {
+        switch ($type) {
+            case "letters":
+                if(is_string($item) || !is_numeric($item)) {
+                    $result['status'] = 1;
+                } else {
+                    $result['status'] = 0;
+                    $result['message'] = $key." can not contain any characters except ".$type.".";
+                }
+                break;
+            case "numbers":
+                if(is_numeric($item)) {
+                    $result['status'] = 1;
+                } else {
+                    $result['status'] = 0;
+                    $result['message'] = $key." can not contain any characters except ".$type.".";
+                }
+                break;
+            case "alphanum":
+                if(ctype_alnum($item)) {
+                    $result['status'] = 1;
+                } else {
+                    $result['status'] = 0;
+                    $result['message'] = $key." should be ".$type." type.";
+                }
+                break;
+
+            default:
+                $result['status'] = 0;
+                $result['message'] = $item." can not contain any characters except ".$type.".";
+                break;
+        }
+        return $result;
+    }
+
+    private static function validateType($item, $type) {
+        if ( (string) $item !== $item ) {
+            return false;
+        } else{
+            return true;
+        }
     }
 }
