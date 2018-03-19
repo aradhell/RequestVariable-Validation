@@ -12,8 +12,6 @@ class RequestVariableValidation
 {
     protected static $instance;
 
-
-
     /**
      * @return RequestVariableValidation
      */
@@ -23,7 +21,7 @@ class RequestVariableValidation
     }
 
     /**
-     * RequestVariableValidatiın constructor.
+     * RequestVariableValidation constructor.
      */
     protected function __construct()
     {
@@ -31,7 +29,6 @@ class RequestVariableValidation
 
     public function checkVariableIfExists($req_variables, $variables)
     {
-
         $success = true;
         $result['status'] = 1;
         $missingParameters = array();
@@ -42,9 +39,12 @@ class RequestVariableValidation
             } else {
                 $parameter = $key;
                 foreach($value as $validation => $rule) {
-                    $validate = self::$validation($req_variables[$key],$rule,$key);
-                    if($validate['status'] != 1) {
-                        $result = $validate;
+                    if(isset($req_variables[$key]))
+                    {
+                        $validate = self::$validation($req_variables[$key],$rule,$key);
+                        if($validate['status'] != 1) {
+                            $result = $validate;
+                        }
                     }
                 }
             }
@@ -71,7 +71,7 @@ class RequestVariableValidation
             $result['status'] = 1;
         } else {
             $result['status'] = 0;
-            $result['message'] = $key." can contain ".$max_length." characters.";
+            $result['message'] = $key." can contain maximum".$max_length." characters.";
         }
         return $result;
     }
@@ -81,7 +81,7 @@ class RequestVariableValidation
             $result['status'] = 1;
         } else {
             $result['status'] = 0;
-            $result['message'] = $key." can contain ".$min_length." characters at minimum.";
+            $result['message'] = $key." should contain ".$min_length." characters at minimum.";
         }
         return $result;
     }
@@ -93,7 +93,7 @@ class RequestVariableValidation
                     $result['status'] = 1;
                 } else {
                     $result['status'] = 0;
-                    $result['message'] = $key." can not contain any characters except ".$type.".";
+                    $result['message'] = $key." cannot contain any characters except ".$type.".";
                 }
                 break;
             case "numbers":
@@ -101,7 +101,7 @@ class RequestVariableValidation
                     $result['status'] = 1;
                 } else {
                     $result['status'] = 0;
-                    $result['message'] = $key." can not contain any characters except ".$type.".";
+                    $result['message'] = $key." cannot contain any characters except ".$type.".";
                 }
                 break;
             case "alphanum":
@@ -111,6 +111,17 @@ class RequestVariableValidation
                     $result['status'] = 0;
                     $result['message'] = $key." should be ".$type." type.";
                 }
+                break;
+            case "email":
+                if (filter_var($item, FILTER_VALIDATE_EMAIL)) {
+                    $result['status'] = 1;
+                } else {
+                    $result['status'] = 0;
+                    $result['message'] = $key.":" . $item. " is not a valid ".$type;
+                }
+                break;
+            case "text":
+                $result['status'] = 1;
                 break;
 
             default:
